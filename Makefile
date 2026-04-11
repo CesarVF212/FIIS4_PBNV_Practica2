@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++17
+CXXFLAGS = -Wall -std=c++17 -Wno-sign-compare -Wno-unused-parameter
 
 TARGET = main
 SRCS = mainBMP.cpp

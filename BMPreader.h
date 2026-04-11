@@ -23,9 +23,15 @@ public:
         unsigned int offset;
     }BMP_Header;
 
-    vector<char>* rawData;//datos en burto leídos de fichero
-    BMP_Header* bmpHeader; //primera cabecera BMP
-    DIB40_Header* dibHeader; //segunda cabecera BMP
+    vector<char>* rawData;  // Datos brutos leídos de fichero.
+    
+    // Cabecera BMP.
+    BMP_Header* bmpHeader;
+
+    // Cabecera DIB.
+    //DIB40_Header* dibHeader; 
+    BITMAPV5_Header* dibHeader;
+
     pixel_t pixelData; //array de pixeles de imagen
 
     vector<char>* readFile(string file){
@@ -35,14 +41,18 @@ public:
         return bytes;
     }
 
-    BMPReader(string fileName){
+    BMPReader(string fileName, string dipHeader){
         //abrir fichero, leer datos
         auto rawData=readFile(fileName);
-        //parsear cabecera
-        bmpHeader=(BMP_Header*)rawData->data();
-        dibHeader=(DIB40_Header*)(rawData->data()+sizeof(BMP_Header));
 
-       //apuntar datos de imagen
+        // Parsear cabecera BMP.
+        bmpHeader=(BMP_Header*)rawData->data();
+
+        // Parsear cabecera DIP.
+        dibHeader=(BITMAPV5_Header*)(rawData->data() + sizeof(BMP_Header));
+        //dibHeader=(DIB40_Header*)(rawData->data()+sizeof(BMP_Header));
+            
+        // Apuntar datos de imagen
         pixelData.type=dibHeader->bpp;
         pixelData.rawPixels=( char*)(rawData->data()+bmpHeader->offset);
 
@@ -55,9 +65,10 @@ public:
         ofstream fout( newFileName, ofstream::binary ); //crear fichero en modo escritura
 
         fout.write((char*)bmpHeader,sizeof(BMP_Header));
-        fout.write((char*)dibHeader,dibHeader->headerSize); //
+        fout.write((char*)dibHeader,dibHeader->headerSize); 
 
-        size_t imageSize=(dibHeader->bpp/8)*dibHeader->width*dibHeader->height;
+
+        size_t imageSize=(dibHeader->bpp/8)*dibHeader->width *dibHeader->height;
 
         fout.write((char*)pixelData.rawPixels, imageSize );
         fout.close();//salvar datos
