@@ -16,7 +16,7 @@ typedef struct
     unsigned char a;
 
 }
-pixel24b;
+pixel32b;
     
 // -- Estructura de pixeles de 16 bits -- //
 typedef struct 

@@ -1,13 +1,11 @@
 #pragma once
 
-
 // --- CABECERAS DIP --- //
-
     // unsigned int = 4 bytes.
     // unsigned short = 2bytes.
 
 
-typedef struct __attribute__ ((packed))
+typedef struct __attribute__ ((packed)) DIB40_Header
 {
     unsigned int headerSize; 
     unsigned int width;
@@ -24,9 +22,10 @@ typedef struct __attribute__ ((packed))
     static const unsigned short headerSizeInBytes = 40;
 
 }
-BITMAPINFO_Header;
+DIB40_Header;
 
-typedef struct __attribute__ ((packed))
+
+typedef struct __attribute__ ((packed)) BITMAPV5_Header
 {
     unsigned int headerSizeInBytes;
     unsigned int width;
@@ -52,6 +51,7 @@ typedef struct __attribute__ ((packed))
     unsigned int profileData;   // Offset o datos del perfil de color.
     unsigned int profileSize;   // Tamaño en Bytes del ICC.
     unsigned int reserved;      // Reservado, siempre 0.
+
     static const unsigned short headerSizeBytes = 124;
 }
 BITMAPV5_Header;

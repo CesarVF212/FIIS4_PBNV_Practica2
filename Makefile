@@ -3,7 +3,7 @@ CXXFLAGS = -Wall -std=c++17
 
 TARGET = main
 SRCS = mainBMP.cpp
-HEADERS = BMPReader.h
+HEADERS = Pixels.h BMPHeader.h DIBHeaders.h BMPReader.h
 
 all: $(TARGET)
 

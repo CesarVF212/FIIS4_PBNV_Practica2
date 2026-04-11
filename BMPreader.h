@@ -6,6 +6,10 @@
 #include <string>
 #include <string.h>
 
+#include "BMPHeader.h"
+#include "DIBHeaders.h"
+#include "Pixels.h"
+
 using namespace std;
 
 
@@ -18,44 +22,6 @@ public:
         unsigned char optional[4];
         unsigned int offset;
     }BMP_Header;
-
-    typedef struct __attribute__ ((packed)){
-       unsigned int headerSize;//  4 bytes : Tamaño de la cabecera DIB (40 bytes en nuestros ejemplos)
-       unsigned int width;
-       unsigned int height;//4 bytes ancho y 4 bytes alto
-       unsigned short numLayers;// 2 bytes: Número capas (sólo 1)
-       unsigned short bpp;// 2 bytes: Bits per pixel (bpp). Si son menor o igual a 8, se usa paleta de color.
-       unsigned int compressMethod;
-       unsigned int imageSize;
-       unsigned int hDepth;
-       unsigned int vDepth;
-       unsigned int paletteColors;
-       unsigned int importantColors;
-    }DIB40_Header;
-
-
-    //estructura de píxeles de 24bit
-    typedef struct{
-        unsigned char b;
-        unsigned char g;
-        unsigned char r;
-    }pixel24b;
-
-    typedef struct{
-        short int rawColor16;
-    }pixel16b;
-
-    //estructura de almacenamiento de datos de imagen
-    //pueden ser distintos tipos de nbits por pixel
-    typedef struct{
-        union{
-            pixel24b* pixels24;
-            pixel16b* pixels16;
-            char* rawPixels;
-        };
-        unsigned short type;//8,16,24, 32 bits per pixel
-    }pixel_t;
-
 
     vector<char>* rawData;//datos en burto leídos de fichero
     BMP_Header* bmpHeader; //primera cabecera BMP
