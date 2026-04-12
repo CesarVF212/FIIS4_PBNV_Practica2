@@ -1,7 +1,10 @@
 #pragma once
 #include <type_traits>
 
-// -- Estructura de pixeles de 24 bits -- //
+// -------------------------- //
+// --- PIXELES de 24 BITS --- //
+// -------------------------- //
+
 typedef struct 
 {
     union
@@ -22,7 +25,11 @@ typedef struct
 }
 pixel24b;
 
-// -- Estructura de pixeles de 32 bits -- //
+
+// -------------------------- //
+// --- PIXELES de 32 BITS --- //
+// -------------------------- //
+
 typedef struct 
 {
     union
@@ -45,14 +52,22 @@ typedef struct
 }
 pixel32b;
 
-// -- Estructura de pixeles de 16 bits -- //
+
+// -------------------------- //
+// --- PIXELES de 16 BITS --- //
+// -------------------------- //
+
 typedef struct 
 {
     unsigned short rawColor16;
 }
 pixel16b;
 
-// -- Estructura de almacenamiento de datos de imagen -- //
+
+// ----------------------- //
+// --- DATOS DE IMAGEN --- //
+// ----------------------- //
+
 typedef struct{
     union{
         pixel32b* pixels32;
@@ -63,8 +78,15 @@ typedef struct{
     unsigned short type; // 8,16,24,32 bits por pixel
 }pixel_t;
 
-// -- Conversiones de ByteRate --- //
+
+// -------------------------------------- //
+// --- CONVERSIONES DE BITS DE IMAGEN --- //
+// -------------------------------------- //
+
+// He visto esta esctructura de C++ tipo TEMPLATE. Que es increiblemente útil para hacer este tipo de clase "anónimas"
+
 // --- Conversiones a 16 BPP --- //
+
 template<typename From>
 pixel16b to16BPP(From pixel);
 
@@ -96,6 +118,7 @@ pixel16b to16BPP<pixel32b>(pixel32b pixel)
 }
 
 // --- Conversiones a 24 BPP --- //
+
 template<typename From>
 pixel24b to24BPP(From pixel);
 
@@ -125,6 +148,7 @@ pixel24b to24BPP<pixel32b>(pixel32b pixel)
 }
 
 // --- Conversiones a 32 BPP --- //
+
 template<typename From>
 pixel32b to32BPP(From pixel);
 

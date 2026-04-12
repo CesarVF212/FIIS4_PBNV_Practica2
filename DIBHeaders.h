@@ -1,10 +1,13 @@
 #pragma once
 using namespace std;
 
-// --- CABECERAS DIP --- //
-    // unsigned int = 4 bytes.
-    // unsigned short = 2bytes.
+// unsigned int = 4 bytes.
+// unsigned short = 2bytes.
 
+
+// ------------- //
+// --- DIB40 --- //
+// ------------- // 
 
 typedef struct __attribute__ ((packed)) DIB40_Header
 {
@@ -22,6 +25,10 @@ typedef struct __attribute__ ((packed)) DIB40_Header
 }
 DIB40_Header;
 
+
+// -----------------//
+// --- BITMAPV5 --- //
+// -----------------//
 
 typedef struct __attribute__ ((packed)) BITMAPV5_Header
 {
@@ -53,7 +60,10 @@ typedef struct __attribute__ ((packed)) BITMAPV5_Header
 BITMAPV5_Header;
 
 
-// --- FUNCIÓN DEBUG: Imprimir las cabeceras completas --- //
+// -------------------------------------- //
+// --- IMPRESIÓN DE CABECERAS (DEBUG) --- //
+// -------------------------------------- //
+
 void printDIB40_Header(DIB40_Header* header)
 {
     cout << "--- DIB40 Header ---" << endl;

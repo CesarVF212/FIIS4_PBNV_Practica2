@@ -1,4 +1,7 @@
 #pragma once
+
+// --- IMPORTACIONES --- //
+
 #include <iostream>
 #include <fstream>
 #include <iterator>
@@ -9,8 +12,6 @@
 #include "BMPHeader.h"
 #include "DIBHeaders.h"
 #include "Pixels.h"
-
-using namespace std;
 
 
 class BMPReader{
@@ -29,10 +30,12 @@ public:
     BMP_Header* bmpHeader;
 
     // Cabecera DIB.
-    //DIB40_Header* dibHeader; 
     BITMAPV5_Header* dibHeader;
 
     pixel_t pixelData; // Array de pixeles de imagen
+
+
+    // --- LECTURA DE FICHERO IMAGEN --- //
 
     vector<char>* readFile(string file){
         ifstream fIn( file, ifstream::binary );
@@ -41,6 +44,8 @@ public:
         return bytes;
     }
 
+
+    // --- CLASE CONSTRUCTORA --- //
     BMPReader(string fileName, string dipHeader){
         //abrir fichero, leer datos
         auto rawData=readFile(fileName);
@@ -59,6 +64,8 @@ public:
     }
 
 
+    // --- ESCRITURA DE FICHERO IMAGEN --- //
+
     void writeBMP(string newFileName)
     {
 
@@ -75,55 +82,9 @@ public:
 
     }
 
-
-    static inline const float bilinearFilter[3][3]={
-    {  1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f },
-    {  1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f },
-    {  1.0f/9.0f, 1.0f/9.0f, 1.0f/9.0f }};
-
-    static inline const float edgeVerticalDetector[3][3]={
-        {1, 0, -1},
-        {1, 0, -1},
-        {1, 0, -1}};
-    static inline const float edgeHorizontalDetector[3][3]={{1, 1, 1},
-                                        {0, 0, 0},
-                                        {-1, -1, -1}};
-
-
-    void applyFilter3x3(const float filter[3][3])
-    {
-
-        //por cada fila
-        pixel24b* newPixels=new pixel24b[dibHeader->width*dibHeader->height];
-
-        for(int y=0;y<dibHeader->height;y++)
-            for(int x=0;x<dibHeader->width;x++) //por cada columna
-            {
-
-                float r=0, g=0,b=0;
-                //pixeles alrededor
-                for(int i=-1;i<=1;i++) //los superiores e inferiores
-                    for(int j=-1;j<=1;j++) //los izquierdos a derechos
-                    {
-                        int accessX=((x+j)+dibHeader->width)%dibHeader->width;
-                        int accessY=((y+i)+dibHeader->height)%dibHeader->height;
-
-                        r+=(pixelData.pixels24[accessY*dibHeader->width+ accessX].r)* filter[i+1][j+1];
-                        g+=(pixelData.pixels24[accessY*dibHeader->width+ accessX].g)* filter[i+1][j+1];
-                        b+=(pixelData.pixels24[accessY*dibHeader->width+ accessX].b)* filter[i+1][j+1];
-
-                    }
-                newPixels[y*dibHeader->width+x]={(unsigned char)r,(unsigned char)g,(unsigned char)b};
-            }
-
-        //copiar resultados
-        size_t pixelSize=pixelData.type/8;
-        memcpy(pixelData.rawPixels,newPixels, pixelSize*dibHeader->width*dibHeader->height);
-
-    }
-
-
+    // -------------------------------- //
     // --- CONVERSORES DE BYTE-RATE --- //
+    // -------------------------------- //
 
     // -> 16 bpp.
     void convertImageTo16bpp(){
@@ -199,7 +160,7 @@ public:
                     newPixels[i] = to32BPP(pixelData.pixels24[i]);
             }
         }
-        //copiar resultados
+        
         pixelData.rawPixels = (char*)newPixels;
         dibHeader->bpp=32;
         pixelData.type=32;
@@ -211,14 +172,16 @@ public:
         dibHeader->compressMethod = 3;
     }
 
+    // -------------------------------- //
     // --- ESCONDER TEXTO EN IMAGEN --- //
+    // -------------------------------- //
 
     void hideRawData(vector<unsigned char>& data)
     {
         // Trabajar con imagenes de 24bit
         if(dibHeader->bpp!=24)
         {
-            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertirá primero. \n";
+            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertira primero. \n";
             this->convertImageTo24bpp();
         }
 
@@ -244,7 +207,7 @@ public:
         // Trabajar con imagenes de 24bit
         if(dibHeader->bpp!=24)
         {
-            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertirá primero. \n";
+            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertira primero. \n";
             this->convertImageTo24bpp();
         }
 
@@ -254,7 +217,7 @@ public:
         int numPixels=dibHeader->width*dibHeader->height;
         
         // Introducimos en el primerbyte "oculto" un caracter @. Esto indica que hay un mensaje oculto que descifrar.
-        lastCharacterRead = recoverByte42bpp(pixelData.pixels24[0]);
+        lastCharacterRead = recoverByte24bpp(pixelData.pixels24[0]);
 
         if(lastCharacterRead != '@')
         {
@@ -267,7 +230,7 @@ public:
         // Nos aseguramos no intentar leer fuera de la memoria asignada. Pararemos de leer al detectar el caracter de final de cadena.
         while(lastCharacterRead != '\0' && contador < numPixels)
         {
-            lastCharacterRead = recoverByte42bpp(pixelData.pixels24[contador]);
+            lastCharacterRead = recoverByte24bpp(pixelData.pixels24[contador]);
             hiddenMessage.push_back(lastCharacterRead);
             contador++;
             
@@ -279,7 +242,7 @@ public:
 
     }
 
-    unsigned char recoverByte42bpp(pixel24b& pixel)
+    unsigned char recoverByte24bpp(pixel24b& pixel)
     {
         unsigned char redMask = 0b00000111;
         unsigned char greenMask = 0b00000011;
@@ -320,7 +283,7 @@ public:
         // Trabajar con imagenes de 24bit
         if(dibHeader->bpp!=24)
         {
-            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertirá primero. \n";
+            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertira primero. \n";
             this->convertImageTo24bpp();
         }
 
@@ -344,36 +307,10 @@ public:
         hideByte24bpp(pixelData.pixels24[contador] , '\0');
     }
 
+    // --------------------------- //
+    // --- ESCALADO DE IMAGEN --- //
+    // --------------------------- //
 
-    void mixImage(BMPReader* otherImage)
-    {
-
-        //por cada cada pixel de this, sumar pixel de otherImage
-        int numPixels=dibHeader->height*dibHeader->width;
-        for(int i=0;i<numPixels;i++)
-        {
-            this->pixelData.pixels24[i].r+=otherImage->pixelData.pixels24[i].r;
-            this->pixelData.pixels24[i].g+=otherImage->pixelData.pixels24[i].g;
-            this->pixelData.pixels24[i].b+=otherImage->pixelData.pixels24[i].b;
-        }
-
-    }
-
-    void toGrayScale(){
-
-        int average=0;
-        int numPixels=dibHeader->height*dibHeader->width;
-        for(int i=0;i<numPixels;i++)
-        {
-            average=pixelData.pixels24[i].r+pixelData.pixels24[i].g+pixelData.pixels24[i].b;
-            average/=3;
-            if(average>1) average=255;
-            else average=0;
-            pixelData.pixels24[i].r=pixelData.pixels24[i].g=pixelData.pixels24[i].b=average;
-        }
-    }
-
-    // Aumentar el tamaño de una imagen.
     void scaleImage(unsigned int scaleFactor) 
     {
         if (scaleFactor != 4 && scaleFactor != 2) {
@@ -418,46 +355,3 @@ public:
         dibHeader->rawDataSizeInBytes = newW * newH * 4; 
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
