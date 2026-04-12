@@ -124,19 +124,7 @@ public:
     }
 
 
-    pixel16b to16Bpp(pixel24b pixel)
-    {
-
-        pixel16b res={0};
-        unsigned short r5=(pixel.r>>3)&0x00FF;
-        unsigned short g6=(pixel.g>>2)&0x00FF;
-        unsigned short b5=(pixel.b>>3)&0x00FF;
-
-        res.rawColor16=(r5<<11) | (g6<<5) | b5;
-
-        return res;
-
-    }
+    // --- CONVERSORES DE BYTE-RATE --- //
 
     void convertImageTo16bpp(){
         //por cada pixel
