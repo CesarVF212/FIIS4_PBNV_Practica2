@@ -227,7 +227,10 @@ public:
         }
 
         int numPixels=dibHeader->width*dibHeader->height;
-        int contador = 0;
+
+        // Introducimos en el primer caracter oculto una @. Esta es la señal para indicar que hay un mensaje oculto.
+        hideByte24bpp(pixelData.pixels24[0] , '@');
+        int contador = 1;
         
         // Por cada byte en el fichero
         for(unsigned char c : data)
@@ -251,18 +254,21 @@ public:
             this->convertImageTo24bpp();
         }
 
-        if(this->isDataHidden == false)
-        {
-            std::cout << "Esta imagen no tiene información oculta";
-            return;
-        }
-
         unsigned char lastCharacterRead = '\n'; // Evitamos que pueda haber información basura.
         vector<unsigned char> hiddenMessage;
         
         int numPixels=dibHeader->width*dibHeader->height;
         
-        int contador = 0;
+        // Introducimos en el primerbyte "oculto" un caracter @. Esto indica que hay un mensaje oculto que descifrar.
+        lastCharacterRead = recoverByte42bpp(pixelData.pixels24[0]);
+
+        if(lastCharacterRead != '@')
+        {
+            std::cout << "No hay un mensaje que descifrar";
+            return;
+        }
+
+        int contador = 1;
         
         // Nos aseguramos no intentar leer fuera de la memoria asignada. Pararemos de leer al detectar el caracter de final de cadena.
         while(lastCharacterRead != '\0' && contador < numPixels)
@@ -270,6 +276,7 @@ public:
             lastCharacterRead = recoverByte42bpp(pixelData.pixels24[contador]);
             hiddenMessage.push_back(lastCharacterRead);
             contador++;
+            
         }
 
         std::cout << "El mensaje secreto es: \t";
@@ -279,18 +286,18 @@ public:
     }
 
     unsigned char recoverByte42bpp(pixel24b& pixel)
-{
-    unsigned char redMask = 0b00000111;
-    unsigned char greenMask = 0b00000011;
-    unsigned char blueMask = 0b00000111;
+    {
+        unsigned char redMask = 0b00000111;
+        unsigned char greenMask = 0b00000011;
+        unsigned char blueMask = 0b00000111;
 
-    unsigned char res = 0;
+        unsigned char res = 0;
 
-    res |= (pixel.r & redMask);
-    res |= (pixel.g & greenMask) << 3;
-    res |= (pixel.b & blueMask) << 5;
+        res |= (pixel.r & redMask);
+        res |= (pixel.g & greenMask) << 3;
+        res |= (pixel.b & blueMask) << 5;
 
-    return res;
+        return res;
 }
 
     void hideByte24bpp(pixel24b& pixel, unsigned char byte)

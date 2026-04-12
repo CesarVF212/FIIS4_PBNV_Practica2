@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     // --- PARTE 2 --- //
 
     // Damos estos datos a un vector.
-    string message = "Este es un mensaje secreto";
+    string message = "En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor";
     vector <unsigned char> messageVector(message.begin(), message.end()); 
     
     // Añadimos al final un /0 para saber cuando parar de leer.
