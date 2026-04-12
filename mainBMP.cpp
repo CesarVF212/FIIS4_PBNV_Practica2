@@ -35,11 +35,48 @@ int main(int argc, char** argv)
     reader16_32->scaleImage(scaleFactor);
     reader16_32->writeBMP("scaledImage.bmp");
 
-    reader32_24->recoverHiddenData();
+    // reader32_24->recoverHiddenData();
+
+    // --- PARTE 2.1 --- //
+    // Programa tipo main para encriptar texto en imagen.
+    bool end = false;
+    char lastRead = 0;
+
+    // Nos aseguramos que haya el número de argumentos correcto.
+    if(argc < 3)
+    {
+        std::cout << "No se han introducido los argumentos correctos. Se deben de especificar dos nombres de archivo [1: Archivo de Imagen | 2: Archivo de Texto]";
+        return 1;
+    }
+
+    while(end != true){
+
+        std::cout << "\n1 - Hide \n";
+        std::cout << "2 - Recover \n";
+        std::cout << "E - End \n";
+
+        std::cin >> lastRead;
+
+        if(lastRead == '1')
+        {
+            std::cout << "\n Informacion guardada en la imagen.";
+        }
+
+        if(lastRead == '2')
+        {
+            std::cout << "\n Informacion recuperada de la imagen";
+        }
+        
+        if(lastRead == 'E' || lastRead == 'e')
+            end = true;
+        
+    }
 
     // Eliminar reader;
     delete reader16_24;
     delete reader16_32;
     delete reader32_16;
     delete reader32_24;
+
+    return 0;
 }
