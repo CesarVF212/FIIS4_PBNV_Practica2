@@ -134,7 +134,7 @@ public:
         for(int y=0;y<dibHeader->height;y++)
             for(int x=0;x<dibHeader->width;x++) //por cada columna
             {
-                newPixels[y*dibHeader->width+x]=to16Bpp(pixelData.pixels24[y*dibHeader->width+x]);
+                newPixels[y*dibHeader->width+x]=to16BPP(pixelData.pixels24[y*dibHeader->width+x]);
             }
 
         //copiar resultados
