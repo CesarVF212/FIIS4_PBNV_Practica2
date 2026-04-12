@@ -30,6 +30,11 @@ int main(int argc, char** argv)
     messageVector.push_back('\0');
     reader32_24->hideRawData(messageVector);
 
+    // Escalado de imagenes.
+    unsigned short scaleFactor = 2;
+    reader16_32->scaleImage(scaleFactor);
+    reader16_32->writeBMP("scaledImage.bmp");
+
     // Eliminar reader;
     delete reader16_24;
     delete reader16_32;

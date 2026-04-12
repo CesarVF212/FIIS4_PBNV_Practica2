@@ -32,7 +32,7 @@ public:
     //DIB40_Header* dibHeader; 
     BITMAPV5_Header* dibHeader;
 
-    pixel_t pixelData; //array de pixeles de imagen
+    pixel_t pixelData; // Array de pixeles de imagen
 
     vector<unsigned char> hiddenData;
 
@@ -309,6 +309,51 @@ public:
             else average=0;
             pixelData.pixels24[i].r=pixelData.pixels24[i].g=pixelData.pixels24[i].b=average;
         }
+    }
+
+    // Aumentar el tamaño de una imagen.
+    void scaleImage(unsigned int scaleFactor) 
+    {
+        if (scaleFactor != 4 && scaleFactor != 2) {
+            std::cout << "ERROR: Solo se permite x2 o x4." << std::endl;
+            return;
+        }
+
+        if(this->dibHeader->bpp != 24)
+        {
+            std::cout << "AVISO: solo se permite el escalado de imagenes de 24 bits. La convertiremos";
+            this->convertImageTo24bpp();
+        }
+
+        // Calculamos las dimensiones de la nueva imagen.
+        int oldW = dibHeader->width;
+        int oldH = dibHeader->height;
+        int newW = oldW * scaleFactor;
+        int newH = oldH * scaleFactor;
+
+        // Reservamos en memoria el espacio para la nueva imagen.
+        pixel24b* newPixels = new pixel24b[newW * newH];
+
+        // 4. Algoritmo de escalado: Recorremos la imagen NUEVA
+        for (int y = 0; y < newH; y++) {
+            for (int x = 0; x < newW; x++) {
+                // Mapeamos el píxel nuevo al original (división entera)
+                int originalX = x / scaleFactor;
+                int originalY = y / scaleFactor;
+                
+                // Copiamos el color del original a la posición nueva
+                newPixels[y * newW + x] = pixelData.pixels24[originalY * oldW + originalX];
+            }
+        }
+
+        // Actualizamos la cabecera.
+        delete[] pixelData.pixels24;          // Liberar imagen vieja
+        pixelData.pixels24 = newPixels;       // Apuntar a la nueva
+        dibHeader->width = newW;              // Actualizar cabecera
+        dibHeader->height = newH;
+        
+        // El tamaño de la imagen en bytes también cambia (para 32bpp)
+        dibHeader->rawDataSizeInBytes = newW * newH * 4; 
     }
 };
 
