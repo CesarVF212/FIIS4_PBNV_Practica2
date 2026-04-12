@@ -126,23 +126,69 @@ public:
 
     // --- CONVERSORES DE BYTE-RATE --- //
 
+    // -> 16 bpp.
     void convertImageTo16bpp(){
-        //por cada pixel
-        //pasar a 16bpp
-        pixel16b* newPixels=new pixel16b[dibHeader->width*dibHeader->height];
+        
+        pixel16b* newPixels=new pixel16b[dibHeader->width * dibHeader->height];
 
-        for(int y=0;y<dibHeader->height;y++)
-            for(int x=0;x<dibHeader->width;x++) //por cada columna
+        for(int y = 0 ; y < dibHeader->height ; y++)
+        {
+            for(int x = 0 ; x < dibHeader->width ; x++)
             {
-                newPixels[y*dibHeader->width+x]=to16BPP(pixelData.pixels24[y*dibHeader->width+x]);
+                int i = y * dibHeader->width + x;
+                if(pixelData.type == 24)
+                    newPixels[i] = to16BPP(pixelData.pixels24[i]);
+                else if(pixelData.type == 32)
+                    newPixels[i] = to16BPP(pixelData.pixels32[i]);
             }
-
-        //copiar resultados
-        size_t pixelSize=pixelData.type/8;
-        memcpy(pixelData.rawPixels,newPixels, pixelSize*dibHeader->width*dibHeader->height);
-        bmpHeader->fileSize=dibHeader->headerSize+sizeof(bmpHeader)+pixelSize*dibHeader->width*dibHeader->height;
+        }
+        pixelData.rawPixels = (char*)newPixels;
         dibHeader->bpp=16;
         pixelData.type=16;
+    }
+
+    // -> 24 bpp.
+    void convertImageTo24bpp(){
+        
+        pixel24b* newPixels=new pixel24b[dibHeader->width * dibHeader->height];
+
+        for(int y = 0 ; y <dibHeader->height ; y++)
+        {
+            for(int x = 0 ; x<dibHeader->width ; x++) 
+            {
+                int i = y * dibHeader->width + x;
+                if(pixelData.type == 16)
+                    newPixels[i] = to24BPP(pixelData.pixels16b[i]);
+                else if(pixelData.type == 32)
+                    newPixels[i] = to24BPP(pixelData.pixels32[i]);
+            }
+        }
+        //copiar resultados
+        pixelData.rawPixels = (char*)newPixels;
+        dibHeader->bpp=24;
+        pixelData.type=24;
+    }
+
+    // -> 32 bpp.
+    void convertImageTo32bpp(){
+        
+        pixel32b* newPixels=new pixel32b[dibHeader->width * dibHeader->height];
+
+        for(int y = 0 ; y < dibHeader->height ; y++)
+        {
+            for(int x = 0 ; x < dibHeader->width ; x++)
+            {
+                int i = y * dibHeader->width + x;
+                if(pixelData.type == 16)
+                    newPixels[i] = to32BPP(pixelData.pixels16b[i]);
+                else if(pixelData.type == 24)
+                    newPixels[i] = to32BPP(pixelData.pixels24[i]);
+            }
+        }
+        //copiar resultados
+        pixelData.rawPixels = (char*)newPixels;
+        dibHeader->bpp=32;
+        pixelData.type=32;
     }
 
 
