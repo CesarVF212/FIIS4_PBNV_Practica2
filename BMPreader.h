@@ -50,6 +50,7 @@ public:
 
         // Parsear cabecera DIP.
         dibHeader=(BITMAPV5_Header*)(rawData->data() + sizeof(BMP_Header));
+        printBITMAPV5_Header(dibHeader);
         //dibHeader=(DIB40_Header*)(rawData->data()+sizeof(BMP_Header));
             
         // Apuntar datos de imagen

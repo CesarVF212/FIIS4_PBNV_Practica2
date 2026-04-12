@@ -3,13 +3,13 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    BMPReader* reader=new BMPReader("pagoda16bit.bmp", "BITMAPV5_Header");
-    // BMPReader* reader2=new BMPReader("FLAG_B24.BMP");
+    BMPReader* reader = new BMPReader("pagoda16bit.bmp", "BITMAPV5_Header");
+    BMPReader* reader2 = new BMPReader("pagoda32bit.bmp", "BITMAPV5_Header");
 
-    cout<<"Tamaño en bytes del fichero: " << reader -> bmpHeader -> fileSize <<endl;
-    cout<<"Tamaño de estructura BMPheader: " << sizeof(BMPReader::BMP_Header) <<endl;
-    cout<<"Tamaño de estructura DIPHeader: " << sizeof(BITMAPV5_Header) <<endl;
-    cout<<"Tamaño de Imagen BMP "<<reader->dibHeader->width<<"x"<<reader->dibHeader->height<<endl;
+    // cout<<"Tamaño en bytes del fichero: " << reader -> bmpHeader -> fileSize <<endl;
+    // cout<<"Tamaño de estructura BMPheader: " << sizeof(BMPReader::BMP_Header) <<endl;
+    // cout<<"Tamaño de estructura DIPHeader: " << sizeof(BITMAPV5_Header) <<endl;
+    // cout<<"Tamaño de Imagen BMP "<<reader->dibHeader->width<<"x"<<reader->dibHeader->height<<endl;
 
     // reader->applyFilter3x3(BMPReader::edgeHorizontalDetector);
     // reader2->applyFilter3x3(BMPReader::edgeVerticalDetector);
@@ -20,9 +20,15 @@ int main(int argc, char** argv)
 
     //reader->hideFile("mensaje.txt");
 
-    reader->writeBMP("nuevoBMP.bmp");
+    // Escribir sobre los readers.
 
+    reader->writeBMP("pagoda16bitNew.bmp");
+    reader2->writeBMP("pagoda32bitNew.bmp");
+
+
+    // Eliminar reader;
     delete reader;
+    delete reader2;
 
 
 }
