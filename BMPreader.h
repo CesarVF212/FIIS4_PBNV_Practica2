@@ -34,6 +34,8 @@ public:
 
     pixel_t pixelData; //array de pixeles de imagen
 
+    vector<unsigned char> hiddenData;
+
     vector<char>* readFile(string file){
         ifstream fIn( file, ifstream::binary );
         vector<char>* bytes=new vector<char>(istreambuf_iterator<char>(fIn), {});
@@ -212,6 +214,29 @@ public:
         dibHeader->compressMethod = 3;
     }
 
+    // --- ESCONDER TEXTO EN IMAGEN --- //
+
+    void hideRawData(vector<unsigned char>& data)
+    {
+        // Trabajar con imagenes de 24bit
+
+        if(dibHeader->bpp!=24)
+            std::cout << "ERROR: imagen no soportada \n";
+
+
+        int numPixels=dibHeader->width*dibHeader->height;
+        int contador = 0;
+        
+        // Por cada byte en el fichero
+        for(unsigned char c : data)
+        {
+            if(contador<numPixels){
+            // Escondemos un pixel y avanzamos al siguiente.
+                hideByte24bpp(pixelData.pixels24[contador] , c);
+                contador++;
+            }
+        }
+    }
 
     void hideByte24bpp(pixel24b& pixel, unsigned char byte)
     {
@@ -285,8 +310,6 @@ public:
             pixelData.pixels24[i].r=pixelData.pixels24[i].g=pixelData.pixels24[i].b=average;
         }
     }
-
-
 };
 
 

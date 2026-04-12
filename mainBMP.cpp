@@ -14,27 +14,21 @@ int main(int argc, char** argv)
 
     reader32_16->convertImageTo16bpp();
     reader32_24->convertImageTo24bpp();
-    
-    // cout<<"Tamaño en bytes del fichero: " << reader -> bmpHeader -> fileSize <<endl;
-    // cout<<"Tamaño de estructura BMPheader: " << sizeof(BMPReader::BMP_Header) <<endl;
-    // cout<<"Tamaño de estructura DIPHeader: " << sizeof(BITMAPV5_Header) <<endl;
-    // cout<<"Tamaño de Imagen BMP "<<reader->dibHeader->width<<"x"<<reader->dibHeader->height<<endl;
-
-    // reader->applyFilter3x3(BMPReader::edgeHorizontalDetector);
-    // reader2->applyFilter3x3(BMPReader::edgeVerticalDetector);
-
-    // reader->mixImage(reader2);
-    // reader->toGrayScale();
-    //reader->convertImageTo16bpp();
-
-    //reader->hideFile("mensaje.txt");
-
-    // Escribir sobre los readers.
 
     reader16_24->writeBMP("pagoda16_24.bmp");
     reader16_32->writeBMP("pagoda16_32.bmp");
     reader32_16->writeBMP("pagoda32_16.bmp");
     reader32_24->writeBMP("pagoda32_24.bmp");
+
+    // --- PARTE 2 --- //
+
+    // Damos estos datos a un vector.
+    string message = "Este es un mensaje secreto";
+    vector <unsigned char> messageVector(message.begin(), message.end()); 
+    
+    // Añadimos al final un /0 para saber cuando parar de leer.
+    messageVector.push_back('\0');
+    reader32_24->hideRawData(messageVector);
 
     // Eliminar reader;
     delete reader16_24;
