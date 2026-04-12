@@ -35,6 +35,8 @@ int main(int argc, char** argv)
     reader16_32->scaleImage(scaleFactor);
     reader16_32->writeBMP("scaledImage.bmp");
 
+    reader32_24->recoverHiddenData();
+
     // Eliminar reader;
     delete reader16_24;
     delete reader16_32;

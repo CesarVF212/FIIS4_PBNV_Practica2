@@ -35,6 +35,7 @@ public:
     pixel_t pixelData; // Array de pixeles de imagen
 
     vector<unsigned char> hiddenData;
+    bool isDataHidden = false;
 
     vector<char>* readFile(string file){
         ifstream fIn( file, ifstream::binary );
@@ -219,10 +220,11 @@ public:
     void hideRawData(vector<unsigned char>& data)
     {
         // Trabajar con imagenes de 24bit
-
         if(dibHeader->bpp!=24)
-            std::cout << "ERROR: imagen no soportada \n";
-
+        {
+            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertirá primero. \n";
+            this->convertImageTo24bpp();
+        }
 
         int numPixels=dibHeader->width*dibHeader->height;
         int contador = 0;
@@ -236,7 +238,60 @@ public:
                 contador++;
             }
         }
+
+        this->isDataHidden = true;
     }
+
+    void recoverHiddenData()
+    {
+        // Trabajar con imagenes de 24bit
+        if(dibHeader->bpp!=24)
+        {
+            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertirá primero. \n";
+            this->convertImageTo24bpp();
+        }
+
+        if(this->isDataHidden == false)
+        {
+            std::cout << "Esta imagen no tiene información oculta";
+            return;
+        }
+
+        unsigned char lastCharacterRead = '\n'; // Evitamos que pueda haber información basura.
+        vector<unsigned char> hiddenMessage;
+        
+        int numPixels=dibHeader->width*dibHeader->height;
+        
+        int contador = 0;
+        
+        // Nos aseguramos no intentar leer fuera de la memoria asignada. Pararemos de leer al detectar el caracter de final de cadena.
+        while(lastCharacterRead != '\0' && contador < numPixels)
+        {
+            lastCharacterRead = recoverByte42bpp(pixelData.pixels24[contador]);
+            hiddenMessage.push_back(lastCharacterRead);
+            contador++;
+        }
+
+        std::cout << "El mensaje secreto es: \t";
+        for(unsigned char c : hiddenMessage)
+            std::cout << c;
+
+    }
+
+    unsigned char recoverByte42bpp(pixel24b& pixel)
+{
+    unsigned char redMask = 0b00000111;
+    unsigned char greenMask = 0b00000011;
+    unsigned char blueMask = 0b00000111;
+
+    unsigned char res = 0;
+
+    res |= (pixel.r & redMask);
+    res |= (pixel.g & greenMask) << 3;
+    res |= (pixel.b & blueMask) << 5;
+
+    return res;
+}
 
     void hideByte24bpp(pixel24b& pixel, unsigned char byte)
     {
@@ -321,7 +376,7 @@ public:
 
         if(this->dibHeader->bpp != 24)
         {
-            std::cout << "AVISO: solo se permite el escalado de imagenes de 24 bits. La convertiremos";
+            std::cout << "AVISO: solo se permite el escalado de imagenes de 24 bits. La convertiremos \n ";
             this->convertImageTo24bpp();
         }
 
