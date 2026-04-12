@@ -48,7 +48,7 @@ pixel32b;
 // -- Estructura de pixeles de 16 bits -- //
 typedef struct 
 {
-    short int rawColor16;
+    unsigned short rawColor16;
 }
 pixel16b;
 
@@ -85,10 +85,13 @@ template<>
 pixel16b to16BPP<pixel32b>(pixel32b pixel) 
 {
     pixel16b res = {0};
-    unsigned short r5=(pixel.r >> 3) & 0x1F;
-    unsigned short g6=(pixel.g >> 2) & 0x3F;
-    unsigned short b5=(pixel.b >> 3) & 0x1F;
-    res.rawColor16 = (r5 << 11) | (g6 << 5) | b5;
+    
+    unsigned short r5 = (pixel.r >> 3) & 0x1F; 
+    unsigned short g6 = (pixel.g >> 2) & 0x3F; 
+    unsigned short b5 = (pixel.b >> 3) & 0x1F; 
+
+    res.rawColor16 = (r5 << 11) | (g6 << 5) | b5; 
+    
     return res;
 }
 
@@ -101,9 +104,9 @@ template<>
 pixel24b to24BPP<pixel16b>(pixel16b pixel) 
 {   
     pixel24b res = {0};
-    unsigned short r5 = (pixel.rawColor16 >> 11) & 0x1F;  // rojo en bits altos
+    unsigned short r5 = (pixel.rawColor16 >> 11) & 0x1F;  
     unsigned short g6 = (pixel.rawColor16 >> 5)  & 0x3F;
-    unsigned short b5 =  pixel.rawColor16        & 0x1F;  // azul en bits bajos
+    unsigned short b5 =  pixel.rawColor16        & 0x1F;  
     res.r = (r5 << 3) | (r5 >> 2);
     res.g = (g6 << 2) | (g6 >> 4);
     res.b = (b5 << 3) | (b5 >> 2);

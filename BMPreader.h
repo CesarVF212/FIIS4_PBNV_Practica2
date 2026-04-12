@@ -145,6 +145,14 @@ public:
         pixelData.rawPixels = (char*)newPixels;
         dibHeader->bpp=16;
         pixelData.type=16;
+
+        // Actualizamos las mascaras de bits.
+        dibHeader->redChannelBitMask   = 0xF800; // 11111 000000 00000
+        dibHeader->greenChannelBitMask = 0x07E0; // 00000 111111 00000
+        dibHeader->blueChannelBitMask  = 0x001F; // 00000 000000 11111
+        dibHeader->alphaChannelBitMask = 0x0000; // Sin transparencia
+        dibHeader->compressMethod      = 3;      // BI_BITFIELDS
+        dibHeader->compressMethod = 3; 
     }
 
     // -> 24 bpp.
@@ -163,10 +171,17 @@ public:
                     newPixels[i] = to24BPP(pixelData.pixels32[i]);
             }
         }
-        //copiar resultados
+        
         pixelData.rawPixels = (char*)newPixels;
         dibHeader->bpp=24;
         pixelData.type=24;
+
+        dibHeader->redChannelBitMask   = 0;
+        dibHeader->greenChannelBitMask = 0;
+        dibHeader->blueChannelBitMask  = 0;
+        dibHeader->alphaChannelBitMask = 0;
+        dibHeader->compressMethod = 0;
+        
     }
 
     // -> 32 bpp.
@@ -189,6 +204,12 @@ public:
         pixelData.rawPixels = (char*)newPixels;
         dibHeader->bpp=32;
         pixelData.type=32;
+
+        dibHeader->redChannelBitMask   = 0x00FF0000;
+        dibHeader->greenChannelBitMask = 0x0000FF00;
+        dibHeader->blueChannelBitMask  = 0x000000FF;
+        dibHeader->alphaChannelBitMask = 0xFF000000;
+        dibHeader->compressMethod = 3;
     }
 
 
