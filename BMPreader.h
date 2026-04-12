@@ -34,9 +34,6 @@ public:
 
     pixel_t pixelData; // Array de pixeles de imagen
 
-    vector<unsigned char> hiddenData;
-    bool isDataHidden = false;
-
     vector<char>* readFile(string file){
         ifstream fIn( file, ifstream::binary );
         vector<char>* bytes=new vector<char>(istreambuf_iterator<char>(fIn), {});
@@ -241,8 +238,6 @@ public:
                 contador++;
             }
         }
-
-        this->isDataHidden = true;
     }
 
     void recoverHiddenData()
