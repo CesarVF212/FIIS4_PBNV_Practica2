@@ -317,25 +317,31 @@ public:
 
     void hideFile(string fileName)
     {
-        //trabajar con imagenes de 24bit
+        // Trabajar con imagenes de 24bit
         if(dibHeader->bpp!=24)
-            cout<<"ERROR: imagen no soportada\n";
+        {
+            std::cout << "AVISO: imagen no soportada. Se acepta formato de 24 Bits unicamente. Se convertirá primero. \n";
+            this->convertImageTo24bpp();
+        }
 
+        // Abrimos el archivo.
         auto fileData=readFile(fileName);
-
         int numPixels=dibHeader->width*dibHeader->height;
-        int contador=0;
-        //por cada byte en el fichero
+
+        // Introducimos en el primer caracter oculto una @. Esta es la señal para indicar que hay un mensaje oculto.
+        hideByte24bpp(pixelData.pixels24[0] , '@');
+        int contador = 1;
+        
+        // Por cada byte en el fichero
         for(auto &b:(*fileData))
         {
+            // Escondemos en cada pixel.
             if(contador<numPixels){
-            //esconder en un pixel
-                hideByte24bpp(pixelData.pixels24[contador] ,b);
-                //avanzar
+                hideByte24bpp(pixelData.pixels24[contador] , b);
                 contador++;
             }
         }
-
+        hideByte24bpp(pixelData.pixels24[contador] , '\0');
     }
 
 

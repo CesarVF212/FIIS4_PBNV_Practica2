@@ -59,12 +59,21 @@ int main(int argc, char** argv)
 
         if(lastRead == '1')
         {
-            std::cout << "\n Informacion guardada en la imagen.";
+            BMPReader* hideReader = new BMPReader(argv[1], "BITMAPV5_Header");
+
+            hideReader->hideFile(argv[2]);
+            std::cout << "\nInformacion guardada en la imagen.\n";
+
+            hideReader->writeBMP(argv[1]);
+            delete hideReader;
         }
 
         if(lastRead == '2')
         {
-            std::cout << "\n Informacion recuperada de la imagen";
+            BMPReader* recoverReader = new BMPReader(argv[1], "BITMAPV5_Header");
+            recoverReader->recoverHiddenData();
+            std::cout << "\nInformacion recuperada de la imagen\n";
+            delete recoverReader;
         }
         
         if(lastRead == 'E' || lastRead == 'e')
