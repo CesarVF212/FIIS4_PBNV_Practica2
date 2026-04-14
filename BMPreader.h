@@ -17,7 +17,8 @@
 class BMPReader{
 public:
 
-    typedef struct __attribute__ ((packed)){
+    typedef struct __attribute__ ((packed))
+    {
         unsigned char format[2];
         unsigned int fileSize;
         unsigned char optional[4];
@@ -37,7 +38,8 @@ public:
 
     // --- LECTURA DE FICHERO IMAGEN --- //
 
-    vector<char>* readFile(string file){
+    vector<char>* readFile(string file)
+    {
         ifstream fIn( file, ifstream::binary );
         vector<char>* bytes=new vector<char>(istreambuf_iterator<char>(fIn), {});
         fIn.close();
@@ -46,7 +48,9 @@ public:
 
 
     // --- CLASE CONSTRUCTORA --- //
-    BMPReader(string fileName, string dipHeader){
+    BMPReader(string fileName, string dipHeader)
+    {
+
         //abrir fichero, leer datos
         auto rawData=readFile(fileName);
 
@@ -87,7 +91,8 @@ public:
     // -------------------------------- //
 
     // -> 16 bpp.
-    void convertImageTo16bpp(){
+    void convertImageTo16bpp()
+    {
         
         pixel16b* newPixels=new pixel16b[dibHeader->width * dibHeader->height];
 
@@ -102,6 +107,7 @@ public:
                     newPixels[i] = to16BPP(pixelData.pixels32[i]);
             }
         }
+
         pixelData.rawPixels = (char*)newPixels;
         dibHeader->bpp=16;
         pixelData.type=16;
@@ -214,7 +220,7 @@ public:
         unsigned char lastCharacterRead = '\n'; // Evitamos que pueda haber información basura.
         vector<unsigned char> hiddenMessage;
         
-        int numPixels=dibHeader->width*dibHeader->height;
+        int numPixels = dibHeader->width * dibHeader->height;
         
         // Introducimos en el primerbyte "oculto" un caracter @. Esto indica que hay un mensaje oculto que descifrar.
         lastCharacterRead = recoverByte24bpp(pixelData.pixels24[0]);
@@ -255,7 +261,7 @@ public:
         res |= (pixel.b & blueMask) << 5;
 
         return res;
-}
+    }
 
     void hideByte24bpp(pixel24b& pixel, unsigned char byte)
     {
@@ -313,7 +319,8 @@ public:
 
     void scaleImage(unsigned int scaleFactor) 
     {
-        if (scaleFactor != 4 && scaleFactor != 2) {
+        if (scaleFactor != 4 && scaleFactor != 2) 
+        {
             std::cout << "ERROR: Solo se permite x2 o x4." << std::endl;
             return;
         }
@@ -333,9 +340,11 @@ public:
         // Reservamos en memoria el espacio para la nueva imagen.
         pixel24b* newPixels = new pixel24b[newW * newH];
 
-        // 4. Algoritmo de escalado: Recorremos la imagen NUEVA
-        for (int y = 0; y < newH; y++) {
-            for (int x = 0; x < newW; x++) {
+        // Algoritmo de escalado: Recorremos la imagen NUEVA
+        for (int y = 0; y < newH; y++) 
+        {
+            for (int x = 0; x < newW; x++) 
+            {
                 // Mapeamos el píxel nuevo al original (división entera)
                 int originalX = x / scaleFactor;
                 int originalY = y / scaleFactor;
@@ -351,7 +360,7 @@ public:
         dibHeader->width = newW;              // Actualizar cabecera
         dibHeader->height = newH;
         
-        // El tamaño de la imagen en bytes también cambia (para 32bpp)
+        // El tamaño de la imagen en bytes también cambia.
         dibHeader->rawDataSizeInBytes = newW * newH * 4; 
     }
 };
