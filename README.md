@@ -1,3 +1,124 @@
+# --- ENGLISH ---
+
+# Practice 2: Binary Files and Information Hiding
+
+This practice implements a C++ library for reading, converting and saving BMP images (`BITMAPV5HEADER`, 16/24/32 bit), extending the `BMPReader` library provided in class.
+It also hides arbitrary data inside the pixels of an image (steganography) and recovers it later, verifying the result with `diff`.
+
+---
+
+In this exercise you are asked to put into practice the knowledge acquired about programming with binary files based on the BMP format. Not all parts are mandatory, but it is recommended to complete most of them as preparation. The grade for this exercise will be decided in a separate exam after the submission date; you are only asked to submit your proposed solution in order to be eligible to take the exam.
+
+---
+
+## Exercise
+
+You are asked to implement a library for manipulating BMP image files that can perform the following operations:
+
+- Two images in `BITMAPV5HEADER` format are provided, for which the student must find out how to implement the header.
+  - The first file is in 16-bit color format, and the second one in 32-bit color format.
+- The code used in class is also provided as support for the practice.
+
+---
+
+## Part 1: File Formats
+
+Create a modification of the supplied `BMPReader` library that supports the following new functionalities:
+
+### Loading and saving
+- Loading of `BITMAPV5HEADER` files:
+  - Loading of 16-bit data
+  - Loading of 32-bit data
+- Saving data to 16 or 32-bit color formats, depending on the type of file/header loaded
+
+### Color format conversion
+Create functions that, regardless of the original format of the file, can transform the pixels from one color format to another:
+
+```cpp
+void convertImageTo16bpp();
+void convertImageTo24bpp();
+void convertImageTo32bpp();
+```
+
+### Main program
+- Create a `main` program that reads the data from the supplied files (`pagoda16bit.bmp` and `pagoda32bit.bmp`) into two variables of type `bmpReader`.
+- Save the data of both images into two "copy" files. To demonstrate that loading and saving have not altered the content, check that the copies are identical to the originals using the `diff` command on Linux.
+- Convert the file `pagoda32bit.bmp` to 24-bit and 16-bit color formats, and save it to a new file for each format change. Check that the image has not been corrupted and verify with a hex editor that the headers are indeed `BITMAPV5HEADER` of the selected color format.
+
+---
+
+## Part 2: Information Hiding in Images
+
+Based on the code seen in class, create the following functions:
+
+### `hideRawData`
+
+```cpp
+void hideRawData(std::vector<unsigned char>& data);
+```
+
+- Receives as a parameter a data vector that will be mixed with the image data in order to hide that information.
+- The image can be in any of the color formats covered: 16, 24 or 32 bit.
+- The "high" color values must be preserved to avoid too much loss of information in the image.
+- Since this information must be recovered later, it is advisable to store somewhere the metadata of the byte vector, such as its size.
+
+### `hideRawData` — Optional part
+
+Since the data vector may be larger than the number of pixels in the image, the image can be "enlarged":
+
+- Calculate a new image width/height with enough pixels to store the information in the data vector.
+- Resize the image to the new size:
+  - Make height and width sizes that are multiples of the original size.
+  - For each pixel of the original image, repeat it horizontally and vertically to stretch the image without losing information.
+- Since the 32-bit format is the one that can hide the most information, it would be advisable to convert the image to this format.
+- Update the headers according to the new image size.
+
+### `recoverHiddenRawData`
+
+```cpp
+std::vector<unsigned char> recoverHiddenRawData();
+```
+
+- Performs the opposite process of `hideRawData`.
+- Given a structure with a loaded image, it recovers the hidden information and returns it in a byte vector.
+- It must be able to work with the same image data types supported by `hideRawData`.
+
+### Main program
+
+The program will receive through `argc/argv` the names of two files and the usage mode:
+
+- **First file:** BMP image file that will be used as the base to hide information.
+- **Second file:** name of the file that contains the data to hide. It can be an image, an executable, a text document...
+- **Usage mode:** can be `1-hide` or `2-recover`.
+
+Depending on the usage mode:
+
+**`hide` mode:**
+1. Load the image file into a `bmpReader` structure and the content of the second file into a vector of type `unsigned char`.
+2. Call `hideRawData` to hide the data of the second file.
+3. Save the image to a new BMP file with the prefix `hiddenData` in its name.
+
+**`recover` mode:**
+1. Load the image file into a `bmpReader` structure, which must contain hidden data.
+2. Call `recoverHiddenRawData`, which will return the data of the original file stored along with the image.
+3. Save the recovered data to the file name passed as the second file.
+
+You must ensure that the recovered data is correct by using the `diff` command to check that the recovered file is identical to the original.
+
+---
+
+## Submission
+
+Submit the developed code on Blackboard before the indicated date. The submitted code files must include the student's name in a comment within the code. The submitted file must follow this naming convention:
+
+```
+PBN_PR2_NAME_SURNAME.zip
+```
+
+> Any submitted file that does not comply with these submission rules may be ignored.
+
+# --- SPANISH ---
+
 # Práctica 2: Archivos binarios y ocultación de información
 
 En este ejercicio se pide poner en práctica el conocimiento adquirido sobre programación con archivos binarios basados en formato BMP. No todas las partes son obligatorias, pero se recomienda realizar la mayor parte de ellas para prepararse. La nota de este ejercicio se decidirá en un examen aparte después de la fecha de entrega, sólo se pide entregar la solución propuesta por el alumno para poder optar a realizar el examen.
